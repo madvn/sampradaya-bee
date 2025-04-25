@@ -139,7 +139,7 @@ function App() {
     
     try {
       // Create a new game directly from the dictionary
-      const newGameData = await createGameFromDictionary('/dictionary.txt', 10);
+      const newGameData = await createGameFromDictionary(process.env.PUBLIC_URL + '/dictionary.txt', 10);
       
       if (newGameData && newGameData.length > 0) {
         setGameData(newGameData);
