@@ -1,4 +1,3 @@
-
 // App.js with Dictionary-based Game Generation
 import React, { useState, useEffect } from 'react';
 import './App.css';
@@ -117,7 +116,7 @@ function App() {
     
     loadGameData();
   }, []);  
-  
+
   useEffect(() => {
     startNewGame();
   }, []);
