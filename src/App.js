@@ -3,44 +3,53 @@ import React, { useState, useEffect } from 'react';
 import './App.css';
 
 // Sample CSV data - first column is the 9 letters, other columns are valid words
-// const gameData = [
-//   ['abcdefghi', 'ace', 'bad', 'cab', 'dab', 'each', 'face', 'fade', 'fad', 'gab', 'had', 'ice', 'bid'],
-//   ['rstuvwxyz', 'rust', 'trust', 'try', 'wry', 'very', 'sure', 'vest', 'rest', 'test', 'zest', 'vex'],
-//   ['nopqrstuv', 'not', 'pot', 'top', 'stop', 'spot', 'post', 'pour', 'our', 'out', 'quit', 'sort'],
-//   ['cfilorsuv', 'for', 'four', 'fill', 'oil', 'soil', 'coil', 'solid', 'circus', 'focus', 'sir', 'us'],
-//   ['aeilmnrst', 'meals', 'steam', 'teams', 'mines', 'smile', 'leans', 'stain', 'train', 'trail', 'enter']
-// ];
+const gameData = [
+  ['abcdefghi', 'ace', 'bad', 'cab', 'dab', 'each', 'face', 'fade', 'fad', 'gab', 'had', 'ice', 'bid'],
+  ['rstuvwxyz', 'rust', 'trust', 'try', 'wry', 'very', 'sure', 'vest', 'rest', 'test', 'zest', 'vex'],
+  ['nopqrstuv', 'not', 'pot', 'top', 'stop', 'spot', 'post', 'pour', 'our', 'out', 'quit', 'sort'],
+  ['cfilorsuv', 'for', 'four', 'fill', 'oil', 'soil', 'coil', 'solid', 'circus', 'focus', 'sir', 'us'],
+  ['aeilmnrst', 'meals', 'steam', 'teams', 'mines', 'smile', 'leans', 'stain', 'train', 'trail', 'enter']
+];
 
 // CSV reader function
-const readGameDataFromCSV = async (csvFilePath) => {
-  try {
-    const response = await fetch(csvFilePath);
-    const csvText = await response.text();
+// const readGameDataFromCSV = async (csvFilePath) => {
+//   try {
+    // const response = await fetch(csvFilePath);
+    // const csvText = await response.text();
     
-    const rows = csvText.split('\n');
-    const gameData = [];
+    // const rows = csvText.split('\n');
+    // const gameData = [];
     
-    for (let i = 1; i < rows.length; i++) {
-      if (!rows[i].trim()) continue;
+    // for (let i = 1; i < rows.length; i++) {
+    //   if (!rows[i].trim()) continue;
+    //   // alert(rows[i])
       
-      const columns = rows[i].split(',');
-      const validWords = columns.slice(1).filter(word => word.trim().length > 0);
-      const gameRow = [columns[0], ...validWords];
+    //   const columns = rows[i].split(',');
+    //   const validWords = columns.slice(1).filter(word => word.trim().length > 0);
+    //   const gameRow = [columns[0], ...validWords];
       
-      gameData.push(gameRow);
-    }
+    //   gameData.push(gameRow);
+    // }
     
-    return gameData;
-  } catch (error) {
-    console.error('Error reading CSV file:', error);
-    return null;
-  }
-};
+//     gameData = [
+//       ['abcdefghi', 'ace', 'bad', 'cab', 'dab', 'each', 'face', 'fade', 'fad', 'gab', 'had', 'ice', 'bid'],
+//       ['rstuvwxyz', 'rust', 'trust', 'try', 'wry', 'very', 'sure', 'vest', 'rest', 'test', 'zest', 'vex'],
+//       ['nopqrstuv', 'not', 'pot', 'top', 'stop', 'spot', 'post', 'pour', 'our', 'out', 'quit', 'sort'],
+//       ['cfilorsuv', 'for', 'four', 'fill', 'oil', 'soil', 'coil', 'solid', 'circus', 'focus', 'sir', 'us'],
+//       ['aeilmnrst', 'meals', 'steam', 'teams', 'mines', 'smile', 'leans', 'stain', 'train', 'trail', 'enter']
+//     ];
+
+//     return gameData;
+//   } catch (error) {
+//     console.error('Error reading CSV file:', error);
+//     return null;
+//   }
+// };
 
 
 
 function App() {
-  const [gameData, setGameData] = useState([]);
+  // const [gameData, setGameData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [currentGame, setCurrentGame] = useState(null);
   const [currentGameIndex, setCurrentGameIndex] = useState(null);
@@ -49,17 +58,17 @@ function App() {
   const [foundWords, setFoundWords] = useState([]);
   const [feedback, setFeedback] = useState(null);
   
-  // Load the game data from CSV when the component mounts
-  useEffect(() => {
-    const loadGameData = async () => {
-      setIsLoading(true);
-      const data = await readGameDataFromCSV('/game-data.csv');
-      setGameData(data);
-      setIsLoading(false);
-    };
+  // // Load the game data from CSV when the component mounts
+  // useEffect(() => {
+  //   const loadGameData = async () => {
+  //     setIsLoading(true);
+  //     const data = await readGameDataFromCSV('/game-data.csv');
+  //     setGameData(data);
+  //     setIsLoading(false);
+  //   };
     
-    loadGameData();
-  }, []);
+  //   loadGameData();
+  // }, []);
   
   useEffect(() => {
     startNewGame();
@@ -188,7 +197,7 @@ function App() {
     if (feedback == 'found') {
       return (
         <div className={`feedback-container ${feedback}`}>
-          <div className="found-feedback">Already&#10;&#13;Found!</div>
+          <div className="found-feedback"><p>Already</p><p>Found!</p></div>
         </div>
       )
     };
