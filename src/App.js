@@ -1,82 +1,122 @@
-// App.js - Web Version
+
+// App.js with Dictionary-based Game Generation
 import React, { useState, useEffect } from 'react';
 import './App.css';
 
-// Sample CSV data - first column is the 9 letters, other columns are valid words
-// const gameData = [
-//   ['abcdefghi', 'ace', 'bad', 'cab', 'dab', 'each', 'face', 'fade', 'fad', 'gab', 'had', 'ice', 'bid'],
-//   ['rstuvwxyz', 'rust', 'trust', 'try', 'wry', 'very', 'sure', 'vest', 'rest', 'test', 'zest', 'vex'],
-//   ['nopqrstuv', 'not', 'pot', 'top', 'stop', 'spot', 'post', 'pour', 'our', 'out', 'quit', 'sort'],
-//   ['cfilorsuv', 'for', 'four', 'fill', 'oil', 'soil', 'coil', 'solid', 'circus', 'focus', 'sir', 'us'],
-//   ['aeilmnrst', 'meals', 'steam', 'teams', 'mines', 'smile', 'leans', 'stain', 'train', 'trail', 'enter']
-// ];
-
-// CSV reader function
-const readGameDataFromCSV = async (csvFilePath) => {
+// Function to load dictionary and create game data
+const createGameFromDictionary = async (dictionaryPath, minWordsRequired = 10) => {
   try {
-    alert(csvFilePath);
-
-    const response = await fetch(csvFilePath);
-    alert(response);
-
-    const csvText = await response.text();    
-    alert(csvText);
+    // Load the dictionary file
+    const response = await fetch(dictionaryPath);
+    const text = await response.text();
     
-    const rows = csvText.split('\n');
-    const gameData = [];
+    // Split into words and filter out invalid ones (too long or too short)
+    const dictionary = text.split('\n')
+      .map(word => word.trim().toLowerCase())
+      .filter(word => word.length >= 2);
     
-    alert(rows[1]);
+    // Keep trying until we find a set with enough valid words
+    let attempts = 0;
+    let gameData = null;
+    
+    while (!gameData && attempts < 50) {
+      attempts++;
       
-    for (let i = 1; i < rows.length; i++) {
-      if (!rows[i].trim()) continue;
+      // Pick 9 random letters
+      const letters = generateRandomLetters(9);
       
-      const columns = rows[i].split(',');
-      const validWords = columns.slice(1).filter(word => word.trim().length > 0);
-      const gameRow = [columns[0], ...validWords];
+      // Find all valid words that can be formed with these letters
+      const validWords = findValidWords(letters, dictionary);
       
-      gameData.push(gameRow);
+      // If we have enough words, create the game data
+      if (validWords.length >= minWordsRequired) {
+        gameData = [letters.join(''), ...validWords];
+      }
     }
     
-    // gameData = [
-    //   ['abcdefghi', 'ace', 'bad', 'cab', 'dab', 'each', 'face', 'fade', 'fad', 'gab', 'had', 'ice', 'bid'],
-    //   ['rstuvwxyz', 'rust', 'trust', 'try', 'wry', 'very', 'sure', 'vest', 'rest', 'test', 'zest', 'vex'],
-    //   ['nopqrstuv', 'not', 'pot', 'top', 'stop', 'spot', 'post', 'pour', 'our', 'out', 'quit', 'sort'],
-    //   ['cfilorsuv', 'for', 'four', 'fill', 'oil', 'soil', 'coil', 'solid', 'circus', 'focus', 'sir', 'us'],
-    //   ['aeilmnrst', 'meals', 'steam', 'teams', 'mines', 'smile', 'leans', 'stain', 'train', 'trail', 'enter']
-    // ];
-
-    alert(gameData);
-
-    return gameData;
+    if (!gameData) {
+      console.error('Failed to create game after multiple attempts');
+      return null;
+    }
+    
+    return [gameData]; // Return as array to match expected format
   } catch (error) {
-    console.error('Error reading CSV file:', error);
+    console.error('Error creating game from dictionary:', error);
     return null;
   }
 };
 
+// Generate random letters, ensuring at least 3 vowels
+const generateRandomLetters = (count) => {
+  const alphabet = 'abcdefghijklmnopqrstuvwxyz';
+  const vowels = 'aeiou';
+  const consonants = 'bcdfghjklmnpqrstvwxyz';
+  
+  let letters = [];
+  
+  // Add at least 3 vowels
+  for (let i = 0; i < 3; i++) {
+    letters.push(vowels.charAt(Math.floor(Math.random() * vowels.length)));
+  }
+  
+  // Fill the rest with random letters
+  for (let i = 3; i < count; i++) {
+    letters.push(alphabet.charAt(Math.floor(Math.random() * alphabet.length)));
+  }
+  
+  // Shuffle the letters
+  return letters.sort(() => Math.random() - 0.5);
+};
+
+// Find all valid words that can be formed with the given letters
+const findValidWords = (letters, dictionary) => {
+  // Create frequency map of available letters
+  const letterMap = {};
+  letters.forEach(letter => {
+    letterMap[letter] = (letterMap[letter] || 0) + 1;
+  });
+  
+  // Check each dictionary word
+  return dictionary.filter(word => {
+    // Since the problem description states that letters can be reused in the same word,
+    // we only need to ensure that the word uses letters from our set
+    for (let i = 0; i < word.length; i++) {
+      if (!letters.includes(word[i])) {
+        return false;
+      }
+    }
+    return true;
+  });
+};
 
 
 function App() {
   const [gameData, setGameData] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
   const [currentGame, setCurrentGame] = useState(null);
   const [currentGameIndex, setCurrentGameIndex] = useState(null);
   const [selectedLetters, setSelectedLetters] = useState([]);
   const [currentWord, setCurrentWord] = useState('');
   const [foundWords, setFoundWords] = useState([]);
   const [feedback, setFeedback] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
   
-  // Load the game data from CSV when the component mounts
+  // Load the dictionary and create game when the component mounts
   useEffect(() => {
     const loadGameData = async () => {
       setIsLoading(true);
-      const data = await readGameDataFromCSV(process.env.PUBLIC_URL + '/game-data.csv');
-      setGameData(data);
+      const data = await createGameFromDictionary(process.env.PUBLIC_URL + '/dictionary.txt', 10);
+      if (data && data.length > 0) {
+        setGameData(data);
+      } else {
+        console.error('Failed to create game data');
+        // Set some fallback data
+        setGameData([['abcdefghi', 'ace', 'bad', 'cab', 'dab', 'each', 'face']]);
+      }
       setIsLoading(false);
     };
     
     loadGameData();
-  }, []);
+  }, []);  
   
   useEffect(() => {
     startNewGame();
