@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import './App.css';
 
 // Function to load dictionary and create game data
-const createGameFromDictionary = async (dictionaryPath, minWordsRequired = 10) => {
+const createGameFromDictionary = async (dictionaryPath, alphabetsFilePath, minWordsRequired=5) => {
   try {
     // Load the dictionary file
     const response = await fetch(dictionaryPath);
@@ -13,26 +13,38 @@ const createGameFromDictionary = async (dictionaryPath, minWordsRequired = 10) =
     const dictionary = text.split('\n')
       .map(word => word.trim().toLowerCase())
       .filter(word => word.length >= 2);
+
+    const alphabetResponse = await fetch(alphabetsFilePath);
+    const alphabetsText = await alphabetResponse.text();
+    const alphabets = alphabetsText.split('\n')
+      .map(word => word.trim().toLowerCase());
+
+    const tamilConstantResponse = await fetch(process.env.PUBLIC_URL + '/tamil-constants.txt');
+    const tamilConstantsText = await tamilConstantResponse.text();
+    const tamilConstants = tamilConstantsText.split('\n')
+      .map(word => word.trim().toLowerCase());
     
     // Keep trying until we find a set with enough valid words
     let attempts = 0;
     let gameData = null;
     
-    while (!gameData && attempts < 50) {
+    while (!gameData && attempts < 100) {
       attempts++;
       
       // Pick 9 random letters
-      const letters = generateRandomLetters(9);
-      
+      const letters = generateRandomLetters(14, alphabets, tamilConstants);
+      // alert(letters);
+
       // Find all valid words that can be formed with these letters
       const validWords = findValidWords(letters, dictionary);
       
       // If we have enough words, create the game data
       if (validWords.length >= minWordsRequired) {
         gameData = [letters.join(''), ...validWords];
+        alert(validWords);
       }
     }
-    
+
     if (!gameData) {
       console.error('Failed to create game after multiple attempts');
       return null;
@@ -46,10 +58,27 @@ const createGameFromDictionary = async (dictionaryPath, minWordsRequired = 10) =
 };
 
 // Generate random letters, ensuring at least 3 vowels
-const generateRandomLetters = (count) => {
+const generateRandomLetters = (count, alphabets, tamilConstants) => {
+  let letters = structuredClone(tamilConstants);
+  
+  // for (let i = 0; i < count; i++) {
+  // alert('target = '+ count.toString() + ' + ' + (tamilConstants.length).toString());
+  while(letters.length < count+(tamilConstants.length)){
+    const l = alphabets[Math.floor(Math.random() * alphabets.length)];
+    if(!letters.includes(l)) {
+      letters.push(l);
+    }
+  // alert('target = '+ count.toString() + ' + ' + (tamilConstants.length).toString() + ' / ' + (letters.length).toString());
+  }
+  
+  // Shuffle the letters
+  return letters.sort(() => Math.random() - 0.5);
+};
+
+const legacygenerateRandomLetters = (count) => {
   const vowels = 'aeiou';
   const consonants = 'bcdfghjklmnpqrstvwxyz';
-  
+
   let letters = [];
   
   // Add at least 3 vowels
@@ -102,13 +131,14 @@ function App() {
   useEffect(() => {
     const loadGameData = async () => {
       setIsLoading(true);
-      const data = await createGameFromDictionary(process.env.PUBLIC_URL + '/dictionary.txt', 10);
+      const data = await createGameFromDictionary(process.env.PUBLIC_URL + '/Ranu-dictionary.txt', process.env.PUBLIC_URL + '/tamil-alphabets.txt');
+      // alert(data);
       if (data && data.length > 0) {
         setGameData(data);
       } else {
-        console.error('Failed to create game data');
+        console.error('main - Failed to create game data');
         // Set some fallback data
-        setGameData([['abcdefghi', 'ace', 'bad', 'cab', 'dab', 'each', 'face']]);
+        // setGameData([['abcdefghi', 'ace', 'bad', 'cab', 'dab', 'each', 'face']]);
       }
       setIsLoading(false);
     };
@@ -138,7 +168,7 @@ function App() {
     
     try {
       // Create a new game directly from the dictionary
-      const newGameData = await createGameFromDictionary(process.env.PUBLIC_URL + '/dictionary.txt', 10);
+      const newGameData = await createGameFromDictionary(process.env.PUBLIC_URL + '/Ranu-dictionary.txt');
       
       if (newGameData && newGameData.length > 0) {
         setGameData(newGameData);
@@ -249,7 +279,7 @@ function App() {
   const renderFeedback = () => {
     if (!feedback) return null;
 
-    if (feedback == 'success') {
+    if (feedback === 'success') {
       return (
         <div className={`feedback-container ${feedback}`}>
           <div className="success-feedback">✓</div>
@@ -257,7 +287,7 @@ function App() {
       )
     };
     
-    if (feedback == 'failure') {
+    if (feedback === 'failure') {
       return (
         <div className={`feedback-container ${feedback}`}>
           <div className="failure-feedback">✗</div>
@@ -265,7 +295,7 @@ function App() {
       )
     };
 
-    if (feedback == 'found') {
+    if (feedback === 'found') {
       return (
         <div className={`feedback-container ${feedback}`}>
           <div className="found-feedback"><p>Already</p><p>Found!</p></div>
