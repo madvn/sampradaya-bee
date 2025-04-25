@@ -117,9 +117,12 @@ function App() {
     loadGameData();
   }, []);  
 
+  // Start a new game when game data is loaded
   useEffect(() => {
-    startNewGame();
-  }, []);
+    if (gameData.length > 0 && !currentGame) {
+      startNewGame();
+    }
+  }, [gameData, currentGame]);
   
   useEffect(() => {
     if (feedback) {
@@ -131,17 +134,39 @@ function App() {
     }
   }, [feedback]);
   
-  const startNewGame = () => {
-    // Randomly select a game from the data
-    const randomIndex = Math.floor(Math.random() * gameData.length);
-    setCurrentGameIndex(randomIndex);
-    const game = gameData[randomIndex];
-    setCurrentGame(game);
+  const startNewGame = async () => {
+    setIsLoading(true);
+    
+    try {
+      // Create a new game directly from the dictionary
+      const newGameData = await createGameFromDictionary('/dictionary.txt', 10);
+      
+      if (newGameData && newGameData.length > 0) {
+        setGameData(newGameData);
+        setCurrentGameIndex(0);
+        setCurrentGame(newGameData[0]);
+      } else {
+        // If failed to create new game, use existing game or fallback
+        const randomIndex = Math.floor(Math.random() * gameData.length);
+        setCurrentGameIndex(randomIndex);
+        setCurrentGame(gameData[randomIndex]);
+      }
+    } catch (error) {
+      console.error('Error starting new game:', error);
+      // Use existing game data as fallback
+      const randomIndex = Math.floor(Math.random() * gameData.length);
+      setCurrentGameIndex(randomIndex);
+      setCurrentGame(gameData[randomIndex]);
+    }
+    
+    // Reset game state
     setSelectedLetters([]);
     setCurrentWord('');
     setFoundWords([]);
     setFeedback(null);
+    setIsLoading(false);
   };
+
   
   const handleLetterPress = (letter, index) => {
     setSelectedLetters([...selectedLetters, { letter, index }]);
