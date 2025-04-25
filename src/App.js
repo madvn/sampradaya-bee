@@ -71,8 +71,13 @@ function App() {
       setFoundWords([...foundWords, currentWord.toLowerCase()]);
       setFeedback('success');
     } else {
-      // Word is invalid or already found
+      if (!isAlreadyFound){
+      // Word is invalid 
       setFeedback('failure');
+      } else {
+        // Word was already found
+        setFeedback('found')
+      }
     }
     
     // Reset current word
@@ -121,16 +126,31 @@ function App() {
   
   const renderFeedback = () => {
     if (!feedback) return null;
-    
-    return (
-      <div className={`feedback-container ${feedback}`}>
-        {feedback === 'success' ? (
+
+    if (feedback == 'success') {
+      return (
+        <div className={`feedback-container ${feedback}`}>
           <div className="success-feedback">✓</div>
-        ) : (
+        </div>
+      )
+    };
+    
+    if (feedback == 'failure') {
+      return (
+        <div className={`feedback-container ${feedback}`}>
           <div className="failure-feedback">✗</div>
-        )}
-      </div>
-    );
+        </div>
+      )
+    };
+
+    if (feedback == 'found') {
+      return (
+        <div className={`feedback-container ${feedback}`}>
+          <div className="found-feedback">Already Found!</div>
+        </div>
+      )
+    };
+
   };
   
   return (

@@ -170,6 +170,13 @@
   animation: fadeIn 0.3s, fadeOut 0.7s 0.3s;
 }
 
+.found-feedback {
+  font-size: 100px;
+  color: #f4c536;
+  font-weight: bold;
+  animation: fadeIn 0.3s, fadeOut 0.7s 0.3s;
+}
+
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
