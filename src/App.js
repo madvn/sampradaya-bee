@@ -47,7 +47,6 @@ const createGameFromDictionary = async (dictionaryPath, minWordsRequired = 10) =
 
 // Generate random letters, ensuring at least 3 vowels
 const generateRandomLetters = (count) => {
-  const alphabet = 'abcdefghijklmnopqrstuvwxyz';
   const vowels = 'aeiou';
   const consonants = 'bcdfghjklmnpqrstvwxyz';
   
@@ -58,9 +57,9 @@ const generateRandomLetters = (count) => {
     letters.push(vowels.charAt(Math.floor(Math.random() * vowels.length)));
   }
   
-  // Fill the rest with random letters
+  // Fill the rest with consonants
   for (let i = 3; i < count; i++) {
-    letters.push(alphabet.charAt(Math.floor(Math.random() * alphabet.length)));
+    letters.push(consonants.charAt(Math.floor(Math.random() * consonants.length)));
   }
   
   // Shuffle the letters
