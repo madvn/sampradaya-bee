@@ -146,7 +146,7 @@ function App() {
     if (feedback == 'found') {
       return (
         <div className={`feedback-container ${feedback}`}>
-          <div className="found-feedback">Already Found!</div>
+          <div className="found-feedback">Already\nFound!</div>
         </div>
       )
     };
