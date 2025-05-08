@@ -2,6 +2,11 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
 
+const G_tamilConstantResponse = await fetch(process.env.PUBLIC_URL + '/tamil-constants.txt');
+const G_tamilConstantsText = await G_tamilConstantResponse.text();
+const G_tamilConstants = G_tamilConstantsText.split('\n')
+  .map(word => word.trim().toLowerCase());
+
 // Function to load dictionary and create game data
 const createGameFromDictionary = async (dictionaryPath, alphabetsFilePath, minWordsRequired=5) => {
   try {
@@ -32,7 +37,7 @@ const createGameFromDictionary = async (dictionaryPath, alphabetsFilePath, minWo
       attempts++;
       
       // Pick 9 random letters
-      const letters = generateRandomLetters(14, alphabets, tamilConstants);
+      const letters = generateRandomLetters(15, alphabets, tamilConstants);
       // alert(letters);
 
       // Find all valid words that can be formed with these letters
@@ -64,6 +69,7 @@ const generateRandomLetters = (count, alphabets, tamilConstants) => {
   // for (let i = 0; i < count; i++) {
   // alert('target = '+ count.toString() + ' + ' + (tamilConstants.length).toString());
   while(letters.length < count+(tamilConstants.length)){
+  // while(letters.length < count){
     const l = alphabets[Math.floor(Math.random() * alphabets.length)];
     if(!letters.includes(l)) {
       letters.push(l);
@@ -72,7 +78,8 @@ const generateRandomLetters = (count, alphabets, tamilConstants) => {
   }
   
   // Shuffle the letters
-  return letters.sort(() => Math.random() - 0.5);
+  // return letters.sort(() => Math.random() - 0.5);
+  return letters;
 };
 
 const legacygenerateRandomLetters = (count) => {
@@ -131,7 +138,7 @@ function App() {
   useEffect(() => {
     const loadGameData = async () => {
       setIsLoading(true);
-      const data = await createGameFromDictionary(process.env.PUBLIC_URL + '/Ranu-dictionary.txt', process.env.PUBLIC_URL + '/tamil-alphabets.txt');
+      const data = await createGameFromDictionary(process.env.PUBLIC_URL + '/Ranu/Ranu-dictionary.txt', process.env.PUBLIC_URL + '/tamil-alphabets.txt');
       // alert(data);
       if (data && data.length > 0) {
         setGameData(data);
@@ -243,16 +250,29 @@ function App() {
     const letters = currentGame[0].split('');
     
     return (
-      <div className="grid">
-        {letters.map((letter, index) => (
-          <button
-            key={index}
-            className={`cell ${selectedLetters.some(item => item.index === index) ? 'selected-cell' : ''}`}
-            onClick={() => handleLetterPress(letter, index)}
-          >
-            {letter.toUpperCase()}
-          </button>
-        ))}
+      <div className='tile-container'>
+        <div className='vowels-grid'>
+          {G_tamilConstants.map((tamilConstant, index) => (
+            <button
+              key={index}
+              className={`const-cell ${selectedLetters.some(item => item.index === index) ? 'selected-cell' : ''}`}
+              onClick={() => handleLetterPress(tamilConstant, index)}
+            >
+              {tamilConstant.toUpperCase()}
+            </button>
+          ))}
+        </div>
+        <div className="consonants-grid">
+          {letters.slice(G_tamilConstants.length).map((letter, index) => (
+            <button
+              key={index}
+              className={`cell ${selectedLetters.some(item => item.index === index) ? 'selected-cell' : ''}`}
+              onClick={() => handleLetterPress(letter, index)}
+            >
+              {letter.toUpperCase()}
+            </button>
+          ))}
+        </div>
       </div>
     );
   };
