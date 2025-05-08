@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/sampradaya-bee/static/css/main.7f430bb5.css",
-    "main.js": "/sampradaya-bee/static/js/main.9e90b71e.js",
+    "main.css": "/sampradaya-bee/static/css/main.0d7a3b6b.css",
+    "main.js": "/sampradaya-bee/static/js/main.611ad3da.js",
     "static/js/453.00f36ad4.chunk.js": "/sampradaya-bee/static/js/453.00f36ad4.chunk.js",
     "index.html": "/sampradaya-bee/index.html",
-    "main.7f430bb5.css.map": "/sampradaya-bee/static/css/main.7f430bb5.css.map",
-    "main.9e90b71e.js.map": "/sampradaya-bee/static/js/main.9e90b71e.js.map",
+    "main.0d7a3b6b.css.map": "/sampradaya-bee/static/css/main.0d7a3b6b.css.map",
+    "main.611ad3da.js.map": "/sampradaya-bee/static/js/main.611ad3da.js.map",
     "453.00f36ad4.chunk.js.map": "/sampradaya-bee/static/js/453.00f36ad4.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.7f430bb5.css",
-    "static/js/main.9e90b71e.js"
+    "static/css/main.0d7a3b6b.css",
+    "static/js/main.611ad3da.js"
   ]
 }
