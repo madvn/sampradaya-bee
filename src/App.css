@@ -42,8 +42,9 @@
 .vowels-grid {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
-  grid-gap: 10px;
+  grid-gap: 2px;
   margin: 20px 0;
+  width: 75%;
 }
 
 .consonants-grid {
@@ -54,14 +55,14 @@
 }
 
 .const-cell {
-  width: 100%;
+  width: 75%;
   aspect-ratio: 1/1;
   background-color: #f6d104;
   border-radius: 8px;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 28px;
+  font-size: 20px;
   font-weight: bold;
   color: #5d5c61;
   border: none;
