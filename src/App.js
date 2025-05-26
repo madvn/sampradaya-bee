@@ -37,7 +37,7 @@ const createGameFromDictionary = async (dictionaryPath, alphabetsFilePath, minWo
       attempts++;
       
       // Pick 9 random letters
-      const letters = generateRandomLetters(15, alphabets, tamilConstants);
+      const letters = generateRandomLetters(12, alphabets, tamilConstants);
       // alert(letters);
 
       // Find all valid words that can be formed with these letters
@@ -138,7 +138,7 @@ function App() {
   useEffect(() => {
     const loadGameData = async () => {
       setIsLoading(true);
-      const data = await createGameFromDictionary(process.env.PUBLIC_URL + '/Ranu/Ranu-dictionary.txt', process.env.PUBLIC_URL + '/tamil-alphabets.txt');
+      const data = await createGameFromDictionary(process.env.PUBLIC_URL + '/Ranu/Ranu-1_10-dictionary.txt', process.env.PUBLIC_URL + '/tamil-alphabets.txt');
       // alert(data);
       if (data && data.length > 0) {
         setGameData(data);
@@ -175,7 +175,7 @@ function App() {
     
     try {
       // Create a new game directly from the dictionary
-      const newGameData = await createGameFromDictionary(process.env.PUBLIC_URL + '/Ranu-dictionary.txt');
+      const newGameData = await createGameFromDictionary(process.env.PUBLIC_URL + '/Ranu-1_10-dictionary.txt');
       
       if (newGameData && newGameData.length > 0) {
         setGameData(newGameData);
@@ -327,11 +327,12 @@ function App() {
   
   return (
     <div className="app">
-      <h1 className="title">Word Finder</h1>
+      <h1 className="title">Ramanusa Nootranthati</h1>
+      <h1 className="title">Pasurams 1-10</h1>
       
-      <button className="new-game-button" onClick={startNewGame}>
+      {/* <button className="new-game-button" onClick={startNewGame}>
         New Game
-      </button>
+      </button> */}
       
       {renderProgressBar()}
       
@@ -344,7 +345,7 @@ function App() {
       <div className="buttons-container">
         <button className="button delete-button" onClick={handleDelete}>
           Delete
-        </button>
+          </button>
         
         <button className="button submit-button" onClick={handleSubmit}>
           Submit
