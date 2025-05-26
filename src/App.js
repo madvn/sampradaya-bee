@@ -244,6 +244,10 @@ function App() {
     setCurrentWord('');
   };
   
+  const handleAnswers = () => {
+    alert(currentGame.slice(1));
+  };
+
   const renderGrid = () => {
     if (!currentGame) return null;
     
@@ -346,10 +350,14 @@ function App() {
         <button className="button delete-button" onClick={handleDelete}>
           Delete
           </button>
-        
+
         <button className="button submit-button" onClick={handleSubmit}>
           Submit
         </button>
+
+        <button className="button answers-button" onClick={handleAnswers}>
+          Answers
+          </button>
       </div>
       
       {renderFeedback()}
